@@ -1,5 +1,12 @@
 $(document).foundation()
 
+$('span').bind('dblclick', function() {
+        $(this).attr('contentEditable', true);
+    }).blur(
+        function() {
+            $(this).attr('contentEditable', false);
+        });
+
 class Megaroster {
   constructor(listSelector) {
     this.studentList = document.querySelector(listSelector)
@@ -113,6 +120,9 @@ class Megaroster {
     li
       .querySelector('button.move-up')
       .addEventListener('click', this.moveUp.bind(this, student))
+    li 
+      .querySelector('button.move-down')  
+      .addEventListener('click', this.moveDown.bind(this, student))
 
   }
 
@@ -134,6 +144,25 @@ class Megaroster {
       this.save()
     }
   }
+
+  moveDown(student, ev) {
+    const btn = ev.target
+    const li = btn.closest('.student')
+
+    const index = this.students.findIndex((currentStudent, i) => {
+      return currentStudent.id === student.id
+    })
+
+    if (index < this.students.length - 1) {
+      this.studentList.insertBefore(li.nextElementSibling, li)
+
+      const previousStudent = this.students[index + 1]
+      this.students[index + 1] = student
+      this.students[index] = previousStudent
+
+      this.save()
+    }
+  }  
 
   removeClassName(el, className){
     el.className = el.className.replace(className, '').trim()
